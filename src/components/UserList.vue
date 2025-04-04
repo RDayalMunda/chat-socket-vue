@@ -38,7 +38,7 @@ const searchQuery = ref("");
 const userList = ref([]);
 const isLoading = ref(false);
 
-const userConfig = computed( ()=> mainProps.userConfig );
+const userConfig = computed(() => mainProps.userConfig);
 
 async function startChat(user) {
   if (isLoading.value) {
@@ -49,9 +49,9 @@ async function startChat(user) {
     const payload = {
       users: [
         { id: userConfig.value.id, name: userConfig.value.name },
-        { id: user.id, name: user.name }
-      ]
-    }
+        { id: user.id, name: user.name },
+      ],
+    };
     const response = await api.post("/group/check-personal-group", payload);
     if (response.data.status === "success") {
       emit("openChat", response.data.groupData);

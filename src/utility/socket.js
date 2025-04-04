@@ -1,16 +1,16 @@
-import { io } from 'socket.io-client'
-import { ref } from 'vue'
+import { io } from "socket.io-client";
+import { ref } from "vue";
 
-export const socket = ref(null)
+export const socket = ref(null);
 
-export function initSocket(userConfig){
+export function initSocket(userConfig) {
   socket.value = io(import.meta.env.VITE_SOCKET_URL, {
     query: {
-      userConfig: JSON.stringify(userConfig)
-    }
-  })
+      userConfig: JSON.stringify(userConfig),
+    },
+  });
 }
 
-export function disconnectSocket(){
-  socket.value.disconnect()
+export function disconnectSocket() {
+  socket.value.disconnect();
 }
