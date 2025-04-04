@@ -1,11 +1,12 @@
 <template>
+  <div>{{ isLive ? 'Live' : 'Not Live' }}</div>
   <ChatBandhu v-if="userConfig.id" />
 </template>
 <script setup>
-import { provide, watch } from "vue";
+import { provide, ref, watch } from "vue";
 import ChatBandhu from "./components/ChatBandhu.vue";
 import { searchInArray } from "./utility/helpers";
-
+import { initSocket, socket } from "./utility/socket";
 const props = defineProps({
   userConfig: {
     type: Object,
@@ -48,13 +49,29 @@ const props = defineProps({
   },
 });
 
+const isLive = ref(false)
+
+function connectionHandler(){
+  console.log('Socket connected')
+  isLive.value = true
+}
+
+function disconnectionHandler(){
+  console.log('Socket disconnected')
+  isLive.value = false
+}
+
 watch(
   () => props.userConfig,
   () => {
     if (props.userConfig.id) {
       console.log("Chat Bandhu Started");
+      initSocket(props.userConfig)
+      socket.value.on('connect', connectionHandler)
+      socket.value.on('disconnect', disconnectionHandler)
     } else {
       console.log("Chat Bandhu Stopped");
+      disconnectSocket()
     }
   },
   { immediate: true }

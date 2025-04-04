@@ -11,18 +11,8 @@ const chatList = ref([]); //chat list is the list of the groups the user has cre
 const mainProps = inject("mainProps");
 const userConfig = mainProps.userConfig;
 
-async function getAllChats() {
-  try{
-    const response = await api.post("/group/check-personal-group");
-    console.log('response',response.data)
-    // chatList.value = response.data;
-  }catch(err){
-    console.log(err)
-  }
-}
 
 onMounted(() => {
-  // getAllChats()
 });
 </script>
 
