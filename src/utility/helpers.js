@@ -11,6 +11,5 @@ export function searchInArray(array, queryString, searchKey = "name") {
       filteredArray.push(user);
     }
   }
-  console.log("after search in array", filteredArray);
   return filteredArray;
 }

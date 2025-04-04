@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 50%;">
+  <div style="width: 50%">
     <h2>User List</h2>
     <input
       type="text"
@@ -7,7 +7,7 @@
       placeholder="Search"
       @input="searchUser"
     />
-    <table style="width: 50%; border: 1px solid black; border-collapse: collapse;">
+    <table style="border: 1px solid black; border-collapse: collapse">
       <thead>
         <tr>
           <th>Id</th>
@@ -16,8 +16,8 @@
         </tr>
       </thead>
       <tbody>
-        <tr v-for="user in userList" :key="user.id">
-          <td>{{ user.id }}</td>
+        <tr v-for="(user, index) in userList" :key="user.id">
+          <td>{{ user.id.slice(20) }}</td>
           <td>{{ user.name }}</td>
           <td>
             <button @click="startChat(user)">Chat</button>
@@ -28,24 +28,46 @@
   </div>
 </template>
 <script setup>
-import { inject, onMounted, ref } from "vue";
+import { computed, inject, onMounted, ref } from "vue";
+import api from "@/utility/api";
+
+const mainProps = inject("mainProps");
+const emit = defineEmits(["openChat"]);
 
 const searchQuery = ref("");
 const userList = ref([]);
+const isLoading = ref(false);
 
-const mainProps = inject("mainProps");
+const userConfig = computed( ()=> mainProps.userConfig );
 
-function startChat(user) {
-  console.log("to start chat with user", user);
+async function startChat(user) {
+  if (isLoading.value) {
+    return;
+  }
+  try {
+    isLoading.value = true;
+    const payload = {
+      users: [
+        { id: userConfig.value.id, name: userConfig.value.name },
+        { id: user.id, name: user.name }
+      ]
+    }
+    const response = await api.post("/group/check-personal-group", payload);
+    if (response.data.status === "success") {
+      emit("openChat", response.data.groupData);
+    }
+  } catch (err) {
+    console.log(err);
+  } finally {
+    isLoading.value = false;
+  }
 }
 
 function searchUser() {
   userList.value = mainProps.getUsersList(searchQuery.value);
-  console.log("userList", userList.value);
 }
 
 onMounted(() => {
-  console.log("mainProps", mainProps);
   searchUser();
 });
 </script>

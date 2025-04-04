@@ -1,14 +1,14 @@
 <template>
-  <ChatBandhu />
+  <ChatBandhu v-if="userConfig.id" />
 </template>
 <script setup>
-import { provide } from "vue";
+import { provide, watch } from "vue";
 import ChatBandhu from "./components/ChatBandhu.vue";
 import { searchInArray } from "./utility/helpers";
 
 const props = defineProps({
-  getUserConfig: {
-    type: Function,
+  userConfig: {
+    type: Object,
     // required: true, // not required in dev
     default: () => ({
       id:
@@ -43,11 +43,22 @@ const props = defineProps({
           name: "Akshay Pethani",
         },
       ];
-      console.log("userList in props", userList);
       return searchInArray(userList, searchQueryString);
     },
   },
 });
+
+watch(
+  () => props.userConfig,
+  () => {
+    if (props.userConfig.id) {
+      console.log("Chat Bandhu Started");
+    } else {
+      console.log("Chat Bandhu Stopped");
+    }
+  },
+  { immediate: true }
+);
 
 provide("mainProps", props);
 </script>
