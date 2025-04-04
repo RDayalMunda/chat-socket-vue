@@ -10,13 +10,18 @@
     />
     <button @click="sendMessage">Send</button>
     <div v-for="message in messageList" :key="message._id">
-      <p>{{ message.content }}</p>
+      <div class="chat-box">
+        <div class="chat-box-sender">{{ message.senderName }}</div>
+        <div class="chat-box-content">{{ message.content }}</div>
+        <div class="chat-box-time">{{ message.createdAt }}</div>
+      </div>
     </div>
   </div>
 </template>
 <script setup>
-import { computed, inject, ref } from "vue";
+import { computed, inject, onMounted, ref } from "vue";
 import { socket } from "../utility/socket";
+import { db } from "../utility/idb";
 
 const props = defineProps({
   groupData: {
@@ -58,4 +63,48 @@ async function sendMessage() {
   } finally {
   }
 }
+
+function addMessage(message) {
+  messageList.value.push(message);
+}
+
+async function getMessagesFromDatabase() {
+  const messages = await db.messages
+    .where("groupId")
+    .equals(groupId.value)
+    .toArray();
+  messageList.value = messages;
+}
+
+onMounted(async () => {
+  console.log("chage  is mounted, fetch messages from the idb");
+  await getMessagesFromDatabase();
+});
+
+defineExpose({
+  addMessage,
+});
 </script>
+<style scoped>
+.chat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+
+.chat-box-sender {
+  font-size: 12px;
+  color: #666;
+}
+
+.chat-box-content {
+  font-size: 16px;
+  color: #333;
+}
+
+.chat-box-time {
+  font-size: 12px;
+  color: #666;
+}
+</style>

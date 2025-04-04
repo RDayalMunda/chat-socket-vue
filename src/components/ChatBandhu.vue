@@ -2,7 +2,12 @@
   <p>Logged in as {{ userConfig.name }}->{{ userConfig.id }}</p>
   <UserList ref="userListRef" @openChat="openChat" />
   <ChatList ref="chatListRef" @openChat="openChat" />
-  <ChatSection ref="chatSectionRef" v-if="activeChat" :groupData="activeChat" />
+  <ChatSection
+    v-if="activeChat"
+    ref="chatSectionRef"
+    :groupData="activeChat"
+    :key="activeChat._id"
+  />
 </template>
 
 <script setup>
@@ -10,6 +15,7 @@ import UserList from "./UserList.vue";
 import ChatList from "./ChatList.vue";
 import ChatSection from "./ChatSection.vue";
 import { socket } from "../utility/socket";
+import { db } from "../utility/idb";
 
 import { computed, inject, onMounted, ref } from "vue";
 
@@ -28,8 +34,10 @@ function openChat(groupData) {
 
 function messageReceiveHandler(messageObj) {
   console.log("SOCKET: onMessage:", messageObj);
+  db.messages.add(messageObj.message);
   if (activeChat.value?._id == messageObj.message.groupId) {
     console.log("update the message list there");
+    chatSectionRef.value.addMessage(messageObj.message);
   } else {
     console.log("to show it as a unseen message");
   }
