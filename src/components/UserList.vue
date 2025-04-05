@@ -1,5 +1,5 @@
 <template>
-  <div style="width: 50%">
+  <div>
     <h2>User List</h2>
     <input
       type="text"
@@ -7,17 +7,15 @@
       placeholder="Search"
       @input="searchUser"
     />
-    <table style="border: 1px solid black; border-collapse: collapse">
+    <table>
       <thead>
         <tr>
-          <th>Id</th>
           <th>Name</th>
           <th>Action</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="(user, index) in userList" :key="user.id">
-          <td>{{ user.id.slice(20) }}</td>
           <td>{{ user.name }}</td>
           <td>
             <button @click="startChat(user)">Chat</button>

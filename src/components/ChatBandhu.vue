@@ -1,13 +1,31 @@
 <template>
-  <p>Logged in as {{ userConfig.name }}->{{ userConfig.id }}</p>
-  <UserList ref="userListRef" @openChat="openChat" />
-  <ChatList ref="chatListRef" @openChat="openChat" />
-  <ChatSection
-    v-if="activeChat"
-    ref="chatSectionRef"
-    :groupData="activeChat"
-    :key="activeChat._id"
-  />
+  
+  <div class="full-header">
+    <p>Logged in as {{ userConfig.name }}->{{ userConfig.id }}</p>
+    <button @click="isUserListVisible = !isUserListVisible">
+      {{ isUserListVisible ? "Hide" : "Show" }} User List
+    </button>
+    <button @click="isChatListVisible = !isChatListVisible">
+      {{ isChatListVisible ? "Hide" : "Show" }} Chat List
+    </button>
+  </div>
+  <div class="full-container">
+    <div v-show="isUserListVisible">
+      <UserList ref="userListRef" @openChat="openChat" />
+    </div>
+    <div v-show="isChatListVisible">
+      <ChatList ref="chatListRef" @openChat="openChat" />
+    </div>
+    <div>
+      <h2>Chat Section</h2>
+      <ChatSection
+        v-if="activeChat"
+        ref="chatSectionRef"
+        :groupData="activeChat"
+        :key="activeChat._id"
+      />
+    </div>
+  </div>
 </template>
 
 <script setup>
@@ -21,6 +39,8 @@ import { computed, inject, onMounted, ref } from "vue";
 
 const mainProps = inject("mainProps");
 const userConfig = computed(() => mainProps.userConfig);
+const isUserListVisible = ref(true);
+const isChatListVisible = ref(true);
 
 const userListRef = ref(null);
 const chatListRef = ref(null);
@@ -57,3 +77,23 @@ onMounted(() => {
   socket.value.on("onTyping", typingReceiveHandler);
 });
 </script>
+
+<style scoped>
+.full-header {
+  display: flex;
+  padding: 10px;
+  height: 50px;
+  max-height: 50px;
+}
+.full-container {
+  display: flex;
+  height: calc(100vh - 100px);
+  width: 100%;
+}
+.full-container > div {
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 10px;
+  overflow-y: scroll;
+}
+</style>

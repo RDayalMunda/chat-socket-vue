@@ -1,5 +1,4 @@
 <template>
-  <div>{{ isLive ? "Live" : "Not Live" }}</div>
   <ChatBandhu v-if="userConfig.id" />
 </template>
 <script setup>

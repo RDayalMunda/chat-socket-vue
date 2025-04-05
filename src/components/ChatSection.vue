@@ -1,6 +1,5 @@
 <template>
   <div>
-    <h2>Chat Section</h2>
     <h3>{{ groupName }} -> {{ groupId }}</h3>
     <input
       v-model="messageContent"
