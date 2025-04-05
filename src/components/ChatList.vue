@@ -2,19 +2,30 @@
   <div>
     <h2>Chat List</h2>
     <div v-for="group in chatGroups" :key="group.id">
-      <div class="chat-group" @click="openChat(group)">{{ group.name }}</div>
+      <div class="chat-group" @click="openChat(group)">
+        <p>
+          <span>
+            {{ group.name }}
+          </span>
+          <span v-if="typingObj[group._id]?.isTyping">
+            Someone is typing...
+          </span>
+        </p>
+      </div>
     </div>
   </div>
 </template>
 <script setup>
 import { computed, inject, onMounted, ref } from "vue";
 import api from "@/utility/api";
+import { debounce } from "@/utility/helpers";
 
 const emit = defineEmits(["openChat"]);
 
 const chatList = ref([]); //chat list is the list of the groups the user has created or joined
 const mainProps = inject("mainProps");
 const userConfig = computed(() => mainProps.userConfig);
+const typingObj = ref({});
 
 const loading = ref(false);
 const chatGroups = ref([]);
@@ -42,8 +53,28 @@ function openChat(group) {
   emit("openChat", group);
 }
 
+const clearTyping = debounce((groupId, senderId) => {
+  delete typingObj.value[groupId][senderId];
+  if (Object.keys(typingObj.value[groupId]).length <= 1) {
+    typingObj.value[groupId].isTyping = false;
+  }
+}, 2000);
+
+function showTypingHandler(response) {
+  typingObj.value[response.groupId] = {
+    ...typingObj.value[response.groupId],
+    [response.senderId]: response.senderName,
+    isTyping: true,
+  };
+  clearTyping(response.groupId, response.senderId);
+}
+
 onMounted(() => {
   getGroups();
+});
+
+defineExpose({
+  showTypingHandler,
 });
 </script>
 

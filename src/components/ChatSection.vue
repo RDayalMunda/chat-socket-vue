@@ -7,6 +7,7 @@
       type="text"
       placeholder="Enter message"
       @keyup.enter="sendMessage"
+      @input="throttleSendTypingEvent"
     />
     <button @click="sendMessage">Send</button>
     <div v-for="message in messageList" :key="message._id">
@@ -22,6 +23,7 @@
 import { computed, inject, onMounted, ref } from "vue";
 import { socket } from "../utility/socket";
 import { db } from "../utility/idb";
+import { throttle } from "../utility/helpers";
 
 const props = defineProps({
   groupData: {
@@ -76,8 +78,19 @@ async function getMessagesFromDatabase() {
   messageList.value = messages;
 }
 
+function sendTypingEvent() {
+  const typingPayload = {
+    groupId: groupId.value,
+    senderId: userConfig.value.id,
+    senderName: userConfig.value.name,
+  };
+  console.log("sending typing event");
+  socket.value.emit("typing", typingPayload);
+}
+
+const throttleSendTypingEvent = throttle(sendTypingEvent, 1000);
+
 onMounted(async () => {
-  console.log("chage  is mounted, fetch messages from the idb");
   await getMessagesFromDatabase();
 });
 

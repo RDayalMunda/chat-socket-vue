@@ -32,18 +32,28 @@ function openChat(groupData) {
   activeChat.value = groupData;
 }
 
-function messageReceiveHandler(messageObj) {
-  console.log("SOCKET: onMessage:", messageObj);
-  db.messages.add(messageObj.message);
-  if (activeChat.value?._id == messageObj.message.groupId) {
+function messageReceiveHandler(response) {
+  console.log("SOCKET: onMessage:", response);
+  db.messages.add(response.message);
+  if (activeChat.value?._id == response.message.groupId) {
     console.log("update the message list there");
-    chatSectionRef.value.addMessage(messageObj.message);
+    chatSectionRef.value.addMessage(response.message);
   } else {
     console.log("to show it as a unseen message");
   }
 }
 
+function typingReceiveHandler(response) {
+  if (chatListRef.value) {
+    chatListRef.value.showTypingHandler(response.typing);
+  }
+  if (activeChat.value?._id == response.typing.groupId) {
+    console.log("show typing inside the chat section");
+  }
+}
+
 onMounted(() => {
   socket.value.on("onMessage", messageReceiveHandler);
+  socket.value.on("onTyping", typingReceiveHandler);
 });
 </script>
