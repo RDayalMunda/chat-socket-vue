@@ -14,7 +14,11 @@
       <UserList ref="userListRef" @openChat="openChat" />
     </div>
     <div v-show="isChatListVisible">
-      <ChatList ref="chatListRef" @openChat="openChat" />
+      <ChatList
+        ref="chatListRef"
+        :activeChat="activeChat"
+        @openChat="openChat"
+      />
     </div>
     <div>
       <h2>Chat Section</h2>
@@ -69,12 +73,22 @@ function typingReceiveHandler(response) {
   }
   if (activeChat.value?._id == response.typing.groupId) {
     console.log("show typing inside the chat section");
+    chatSectionRef.value.showTypingHandler(response.typing);
+  }
+}
+
+function newGroupCreatedHandler(response) {
+  console.log("SOCKET: onNewGroupCreated:", response.group);
+  console.log("chatListRef.value", chatListRef.value);
+  if (chatListRef.value) {
+    chatListRef.value.prependGroup(response.group);
   }
 }
 
 onMounted(() => {
   socket.value.on("onMessage", messageReceiveHandler);
   socket.value.on("onTyping", typingReceiveHandler);
+  socket.value.on("onRoomCreated", newGroupCreatedHandler);
 });
 </script>
 

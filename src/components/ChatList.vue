@@ -1,14 +1,14 @@
 <template>
   <div>
     <h2>Chat List</h2>
-    <div v-for="group in chatGroups" :key="group.id">
+    <div v-for="(group, g) in chatGroups" :key="group._id">
       <div class="chat-group" @click="openChat(group)">
         <p>
           <span>
             {{ group.name }}
           </span>
-          <span v-if="typingObj[group._id]?.isTyping">
-            Someone is typing...
+          <span v-if="typingObj[group._id]?.isTyping" class="typing-text">
+            {{getTypingText(typingObj[group._id], group)}}
           </span>
         </p>
       </div>
@@ -19,6 +19,13 @@
 import { computed, inject, onMounted, ref } from "vue";
 import api from "@/utility/api";
 import { debounce } from "@/utility/helpers";
+
+const props = defineProps({
+  activeChat: {
+    type: Object,
+    default: null,
+  },
+});
 
 const emit = defineEmits(["openChat"]);
 
@@ -69,12 +76,28 @@ function showTypingHandler(response) {
   clearTyping(response.groupId, response.senderId);
 }
 
+function prependGroup(groupData) {
+  console.log("chatGroups.value", chatGroups.value);
+  console.log("prependGroup:", groupData);
+  chatGroups.value.push(groupData);
+}
+
+function getTypingText(typingGroupObj, group){
+  const typingText = "is typing...";
+  if (!group.isPersonal) {
+    const typingNames = Object.values(typingGroupObj).filter( item => item !== true ).join(", ");
+    typingText =  typingNames + (typingNames.length > 1 ? " are " : "is") + typingText;
+  }
+  return typingText;
+}
+
 onMounted(() => {
   getGroups();
 });
 
 defineExpose({
   showTypingHandler,
+  prependGroup,
 });
 </script>
 
@@ -84,5 +107,10 @@ defineExpose({
 }
 .chat-group:hover {
   background-color: #f0f0f0;
+}
+.typing-text{
+  font-size: 12px;
+  color: #888;
+  margin-left: 10px;
 }
 </style>

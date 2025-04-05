@@ -1,6 +1,7 @@
 <template>
   <div>
     <h3>{{ groupName }} -> {{ groupId }}</h3>
+    <p>{{typingText}}</p>
     <input
       v-model="messageContent"
       type="text"
@@ -22,7 +23,7 @@
 import { computed, inject, onMounted, ref } from "vue";
 import { socket } from "../utility/socket";
 import { db } from "../utility/idb";
-import { throttle } from "../utility/helpers";
+import { debounce, throttle } from "../utility/helpers";
 
 const props = defineProps({
   groupData: {
@@ -48,6 +49,7 @@ const groupName = computed(() => {
 
 const messageContent = ref("");
 const messageList = ref([]);
+const typingText = ref("")
 
 async function sendMessage() {
   try {
@@ -70,11 +72,15 @@ function addMessage(message) {
 }
 
 async function getMessagesFromDatabase() {
-  const messages = await db.messages
-    .where("groupId")
-    .equals(groupId.value)
-    .toArray();
-  messageList.value = messages;
+  try{
+    const messages = await db.messages
+      .where("groupId")
+      .equals(groupId.value)
+      .toArray();
+    messageList.value = messages;
+  } catch(err){
+    console.log(err)
+  }
 }
 
 function sendTypingEvent() {
@@ -89,12 +95,25 @@ function sendTypingEvent() {
 
 const throttleSendTypingEvent = throttle(sendTypingEvent, 1000);
 
+const clearTypingText = debounce(() => {
+  typingText.value = "";
+}, 1000);
+
+function showTypingHandler(typingObj){
+  if (typingObj.senderId == userConfig.value.id) {
+    return;
+  }
+  typingText.value = typingObj.senderName + " is typing...";
+  clearTypingText();
+}
+
 onMounted(async () => {
   await getMessagesFromDatabase();
 });
 
 defineExpose({
   addMessage,
+  showTypingHandler,
 });
 </script>
 <style scoped>
