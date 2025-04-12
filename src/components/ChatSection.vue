@@ -1,6 +1,6 @@
 <template>
-  <div>
-    <h3>{{ groupName }} -> {{ groupId }}</h3>
+  <div class="chat-section-container" v-if="isRender">
+    <h3>{{ groupName }} -> {{ groupId }}  <button @click="closeChatSection">X</button></h3>
     <p>{{typingText}}</p>
     <input
       v-model="messageContent"
@@ -21,30 +21,32 @@
 </template>
 <script setup>
 import { computed, inject, onMounted, ref } from "vue";
+import { useChatBandhuStore } from "../store";
 import { socket } from "../utility/socket";
 import { db } from "../utility/idb";
 import { debounce, throttle } from "../utility/helpers";
 
-const props = defineProps({
-  groupData: {
-    type: Object,
-    required: true,
-  },
-});
-
+const chatBandhuStore = useChatBandhuStore();
 const mainProps = inject("mainProps");
 const userConfig = computed(() => mainProps.userConfig);
+const groupData = computed(() => chatBandhuStore.getLastChatGroup);
+const isChatSectionOpen = computed(() => chatBandhuStore.getIsChatSectionOpen);
+const isRender = computed(() => isChatSectionOpen.value && groupData.value);
 
-const groupId = computed(() => props.groupData._id);
+function closeChatSection() {
+  chatBandhuStore.setIsChatSectionOpen(false);
+}
+
+const groupId = computed(() => groupData.value._id);
 const groupName = computed(() => {
-  if (props.groupData.isPersonal) {
-    if (props.groupData.users.length == 1) {
-      return props.groupData.userNames[0];
+  if (groupData.value.isPersonal) {
+    if (groupData.value.users.length == 1) {
+      return groupData.value.userNames[0];
     }
-    const userIndex = props.groupData.users[0] == userConfig.value.id ? 1 : 0;
-    return props.groupData.userNames[userIndex];
+    const userIndex = groupData.value.users[0] == userConfig.value.id ? 1 : 0;
+    return groupData.value.userNames[userIndex];
   }
-  return props.groupData.name;
+  return groupData.value.name;
 });
 
 const messageContent = ref("");
@@ -117,6 +119,21 @@ defineExpose({
 });
 </script>
 <style scoped>
+.chat-section-container {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  width: 500px;
+  height: 500px;
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  z-index: 1000;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
+  
+  
+}
 .chat-box {
   display: flex;
   flex-direction: column;

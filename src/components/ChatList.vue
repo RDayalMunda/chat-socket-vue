@@ -83,7 +83,7 @@ function prependGroup(groupData) {
 }
 
 function getTypingText(typingGroupObj, group){
-  const typingText = "is typing...";
+  let typingText = "is typing...";
   if (!group.isPersonal) {
     const typingNames = Object.values(typingGroupObj).filter( item => item !== true ).join(", ");
     typingText =  typingNames + (typingNames.length > 1 ? " are " : "is") + typingText;

@@ -1,5 +1,5 @@
 <template>
-  
+  <ChatFloater  />
   <div class="full-header">
     <p>Logged in as {{ userConfig.name }}->{{ userConfig.id }}</p>
     <button @click="isUserListVisible = !isUserListVisible">
@@ -20,19 +20,18 @@
         @openChat="openChat"
       />
     </div>
-    <div>
-      <h2>Chat Section</h2>
-      <ChatSection
-        v-if="activeChat"
-        ref="chatSectionRef"
-        :groupData="activeChat"
-        :key="activeChat._id"
-      />
-    </div>
   </div>
+  <ChatSection
+    v-if="activeChat"
+    ref="chatSectionRef"
+    :groupData="activeChat"
+    :key="activeChat?._id"
+  />
 </template>
 
 <script setup>
+import { useChatBandhuStore } from "../store";
+import ChatFloater from "./ChatFloater.vue";
 import UserList from "./UserList.vue";
 import ChatList from "./ChatList.vue";
 import ChatSection from "./ChatSection.vue";
@@ -41,6 +40,7 @@ import { db } from "../utility/idb";
 
 import { computed, inject, onMounted, ref } from "vue";
 
+const chatBandhuStore = useChatBandhuStore();
 const mainProps = inject("mainProps");
 const userConfig = computed(() => mainProps.userConfig);
 const isUserListVisible = ref(true);
@@ -50,10 +50,11 @@ const userListRef = ref(null);
 const chatListRef = ref(null);
 const chatSectionRef = ref(null);
 
-const activeChat = ref(null);
+const activeChat = computed(() => chatBandhuStore.getLastChatGroup);
 
 function openChat(groupData) {
-  activeChat.value = groupData;
+  chatBandhuStore.setLastChatGroup(groupData);
+  chatBandhuStore.setIsChatSectionOpen(true);
 }
 
 function messageReceiveHandler(response) {
