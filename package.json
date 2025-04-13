@@ -1,8 +1,10 @@
 {
   "name": "chat-bandhu",
   "version": "0.0.0",
-  "private": true,
   "type": "module",
+  "main": "dist/chat-bandhu.js",
+  "files": ["dist"],
+  "author": "Ramdayalmunda",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
