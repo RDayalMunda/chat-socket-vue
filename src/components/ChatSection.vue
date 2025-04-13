@@ -26,7 +26,7 @@
 import { computed, inject, onMounted, ref } from "vue";
 import { useChatBandhuStore } from "../store";
 import { socket } from "../utility/socket";
-import { db } from "../utility/idb";
+// import { db } from "../utility/idb";
 import { debounce, throttle } from "../utility/helpers";
 import api from "@/utility/api";
 
@@ -78,15 +78,15 @@ function addMessage(message) {
 }
 
 async function getMessagesFromDatabase() {
-  try {
-    const messages = await db.messages
-      .where("groupId")
-      .equals(groupId.value)
-      .toArray();
-    messageList.value = messages;
-  } catch (err) {
-    console.log(err);
-  }
+  // try {
+  //   const messages = await db.messages
+  //     .where("groupId")
+  //     .equals(groupId.value)
+  //     .toArray();
+  //   messageList.value = messages;
+  // } catch (err) {
+  //   console.log(err);
+  // }
 }
 
 function sendTypingEvent() {

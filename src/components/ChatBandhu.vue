@@ -36,7 +36,7 @@ import UserList from "./UserList.vue";
 import ChatList from "./ChatList.vue";
 import ChatSection from "./ChatSection.vue";
 import { socket } from "../utility/socket";
-import { db } from "../utility/idb";
+// import { db } from "../utility/idb";
 
 import { computed, inject, onMounted, ref } from "vue";
 
@@ -59,13 +59,13 @@ function openChat(groupData) {
 
 function messageReceiveHandler(response) {
   console.log("SOCKET: onMessage:", response);
-  db.messages.add(response.message);
-  if (activeChat.value?._id == response.message.groupId) {
-    console.log("update the message list there");
-    chatSectionRef.value.addMessage(response.message);
-  } else {
-    console.log("to show it as a unseen message");
-  }
+  // db.messages.add(response.message);
+  // if (activeChat.value?._id == response.message.groupId) {
+  //   console.log("update the message list there");
+  //   chatSectionRef.value.addMessage(response.message);
+  // } else {
+  //   console.log("to show it as a unseen message");
+  // }
 }
 
 function typingReceiveHandler(response) {

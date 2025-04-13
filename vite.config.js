@@ -18,4 +18,17 @@ export default defineConfig({
   server: {
     host: true,
   },
+  build: {
+    lib: {
+      entry: 'src/main.ce.js', // or .ts
+      name: 'ChatBandhu',
+      formats: ['iife'], // iife is great for standalone builds
+      fileName: () => 'chat-bandhu.js',
+    },
+    rollupOptions: {
+      // ✅ Don't externalize 'vue'
+      // This will bundle Vue into your output
+      external: [],
+    },
+  },
 })
