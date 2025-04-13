@@ -1,8 +1,9 @@
 {
   "name": "chat-bandhu",
-  "version": "0.0.0",
+  "version": "0.0.2",
   "type": "module",
-  "main": "dist/chat-bandhu.js",
+  "main": "dist/chat-bandhu.umd.js",
+  "module": "dist/chat-bandhu.es.js",
   "files": ["dist"],
   "author": "Ramdayalmunda",
   "scripts": {
@@ -10,6 +11,9 @@
     "build": "vite build",
     "preview": "vite preview",
     "format": "prettier --write src/"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
   },
   "dependencies": {
     "axios": "^1.8.4",

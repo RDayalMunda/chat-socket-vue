@@ -1,6 +1,6 @@
 import ChatBandhu from "./App.vue";
 
-// export { ChatBandhu };
+export { ChatBandhu };
 
 // Optional: default export as plugin
 export default {
