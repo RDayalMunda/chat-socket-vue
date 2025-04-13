@@ -20,7 +20,8 @@ export default defineConfig({
   },
   build: {
     lib: {
-      entry: 'src/main.ce.js', // or .ts
+      // entry: 'src/main.ce.js', // or .ts
+      entry: 'src/index.js',
       name: 'ChatBandhu',
       formats: ['iife'], // iife is great for standalone builds
       fileName: () => 'chat-bandhu.js',
