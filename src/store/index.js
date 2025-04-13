@@ -3,7 +3,7 @@ import { defineStore } from "pinia";
 const localStateKey = "chat-bandhu";
 function getInitialState() {
   const localState = localStorage.getItem(localStateKey);
-  const parsedState = JSON.parse(localState || '{}');
+  const parsedState = JSON.parse(localState || "{}");
   return {
     notificationCount: parsedState.notificationCount || 0,
     isChatSectionVisible: parsedState.isChatSectionVisible || true,
@@ -41,7 +41,6 @@ export const useChatBandhuStore = defineStore(localStateKey, {
       this.isChatSectionOpen = status;
     },
   },
-
 });
 
 export function initStoreSubscription() {

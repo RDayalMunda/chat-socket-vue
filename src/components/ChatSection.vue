@@ -1,7 +1,10 @@
 <template>
   <div class="chat-section-container" v-if="isRender">
-    <h3>{{ groupName }} -> {{ groupId }}  <button @click="closeChatSection">X</button></h3>
-    <p>{{typingText}}</p>
+    <h3>
+      {{ groupName }} -> {{ groupId }}
+      <button @click="closeChatSection">X</button>
+    </h3>
+    <p>{{ typingText }}</p>
     <input
       v-model="messageContent"
       type="text"
@@ -25,6 +28,7 @@ import { useChatBandhuStore } from "../store";
 import { socket } from "../utility/socket";
 import { db } from "../utility/idb";
 import { debounce, throttle } from "../utility/helpers";
+import api from "@/utility/api";
 
 const chatBandhuStore = useChatBandhuStore();
 const mainProps = inject("mainProps");
@@ -51,7 +55,7 @@ const groupName = computed(() => {
 
 const messageContent = ref("");
 const messageList = ref([]);
-const typingText = ref("")
+const typingText = ref("");
 
 async function sendMessage() {
   try {
@@ -74,14 +78,14 @@ function addMessage(message) {
 }
 
 async function getMessagesFromDatabase() {
-  try{
+  try {
     const messages = await db.messages
       .where("groupId")
       .equals(groupId.value)
       .toArray();
     messageList.value = messages;
-  } catch(err){
-    console.log(err)
+  } catch (err) {
+    console.log(err);
   }
 }
 
@@ -101,7 +105,7 @@ const clearTypingText = debounce(() => {
   typingText.value = "";
 }, 1000);
 
-function showTypingHandler(typingObj){
+function showTypingHandler(typingObj) {
   if (typingObj.senderId == userConfig.value.id) {
     return;
   }
@@ -109,8 +113,18 @@ function showTypingHandler(typingObj){
   clearTypingText();
 }
 
+async function getMessagesFromServer() {
+  try {
+    const response = await api.get(`/message/${groupId.value}`);
+    messageList.value = response.data.messages;
+  } catch (err) {
+    console.log(err);
+  }
+}
+
 onMounted(async () => {
-  await getMessagesFromDatabase();
+  // await getMessagesFromDatabase();
+  getMessagesFromServer();
 });
 
 defineExpose({
@@ -131,8 +145,6 @@ defineExpose({
   padding: 10px;
   z-index: 1000;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
-  
-  
 }
 .chat-box {
   display: flex;

@@ -8,7 +8,7 @@
             {{ group.name }}
           </span>
           <span v-if="typingObj[group._id]?.isTyping" class="typing-text">
-            {{getTypingText(typingObj[group._id], group)}}
+            {{ getTypingText(typingObj[group._id], group) }}
           </span>
         </p>
       </div>
@@ -82,11 +82,14 @@ function prependGroup(groupData) {
   chatGroups.value.push(groupData);
 }
 
-function getTypingText(typingGroupObj, group){
+function getTypingText(typingGroupObj, group) {
   let typingText = "is typing...";
   if (!group.isPersonal) {
-    const typingNames = Object.values(typingGroupObj).filter( item => item !== true ).join(", ");
-    typingText =  typingNames + (typingNames.length > 1 ? " are " : "is") + typingText;
+    const typingNames = Object.values(typingGroupObj)
+      .filter((item) => item !== true)
+      .join(", ");
+    typingText =
+      typingNames + (typingNames.length > 1 ? " are " : "is") + typingText;
   }
   return typingText;
 }
@@ -108,7 +111,7 @@ defineExpose({
 .chat-group:hover {
   background-color: #f0f0f0;
 }
-.typing-text{
+.typing-text {
   font-size: 12px;
   color: #888;
   margin-left: 10px;

@@ -6,6 +6,8 @@ import { provide, ref, watch } from "vue";
 import ChatBandhu from "./components/ChatBandhu.vue";
 import { searchInArray } from "./utility/helpers";
 import { initSocket, socket } from "./utility/socket";
+import { createPinia, setActivePinia } from "pinia";
+import { initStoreSubscription } from "./store";
 const props = defineProps({
   userConfig: {
     type: Object,
@@ -73,8 +75,11 @@ watch(
       disconnectSocket();
     }
   },
-  { immediate: true }
+  { immediate: true },
 );
+
+setActivePinia(createPinia());
+initStoreSubscription();
 
 provide("mainProps", props);
 </script>

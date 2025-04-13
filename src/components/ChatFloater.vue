@@ -29,11 +29,9 @@ function floaterClickHandler() {
   if (lastChatGroup.value) {
     chatBandhuStore.setIsChatSectionOpen(true);
   } else {
-    console.log('on chat list');
+    console.log("on chat list");
   }
-  
 }
-
 </script>
 
 <style scoped>

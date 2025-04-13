@@ -1,5 +1,5 @@
 <template>
-  <ChatFloater  />
+  <ChatFloater />
   <div class="full-header">
     <p>Logged in as {{ userConfig.name }}->{{ userConfig.id }}</p>
     <button @click="isUserListVisible = !isUserListVisible">
